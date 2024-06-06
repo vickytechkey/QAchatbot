@@ -16,6 +16,7 @@ import sentence_transformers
 # Create your views here.
 
 def home(request):
+    query = request.GET.get('q')
     os.environ["HUGGINGFACEHUB_API_TOKEN"] = "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"
     module_dir = os.path.dirname(__file__)
     file_path = os.path.join(module_dir, 'data.txt')
@@ -26,11 +27,8 @@ def home(request):
     docs = text_splitter.split_documents(document)
     embedding = HuggingFaceBgeEmbeddings()
     db = FAISS.from_documents(docs , embedding)
-    query = "who is vikram?"
     docs_similarity = db.similarity_search(query)
     llm = HuggingFaceHub(repo_id='google/flan-t5-xxl' , model_kwargs={"temprature":0.8 , "max_length":520})
-    # tokenizer = AutoTokenizer.from_pretrained("google/flan-t5-xxl")
-    # llm = AutoModelForSeq2SeqLM.from_pretrained("google/flan-t5-xxl")
     chain = load_qa_chain(llm ,  chain_type="stuff")
     response_text = chain.run(input_documents =docs_similarity , question = query )
     return HttpResponse(response_text, content_type="text/plain")
