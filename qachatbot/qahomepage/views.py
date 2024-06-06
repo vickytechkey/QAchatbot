@@ -17,6 +17,8 @@ import sentence_transformers
 
 def home(request):
     query = request.GET.get('q')
+    if query is None:
+        query = "who is vignesh?"
     os.environ["HUGGINGFACEHUB_API_TOKEN"] = "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"
     module_dir = os.path.dirname(__file__)
     file_path = os.path.join(module_dir, 'data.txt')
