@@ -14,21 +14,22 @@ import sentence_transformers
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
 from .readdoc import create_folder
-from .loadmodel import checkformodelcache
+from .loadmodel import load_model
 
-# Create your views here.
-
-async def home(request):
-    query = request.GET.get('q')
-    if query is None:
-        query = "who is vignesh?"
-    dir_location = create_folder('local_flan_t5_xxl')
-    model = checkformodelcache(
-        'model_local_flan_t5_xxl',
+dir_location = create_folder('local_flan_t5_xxl')
+model = load_model(
         'google/flan-t5-xxl',
         dir_location
     )
+
+# Create your views here.
+
+def home(request):
+    query = request.GET.get('q')
+    if query is None:
+        query = "who is vignesh?"
+    
     
     # data = similar_text('data.txt', query)
-    response_text = "Testing"
+    response_text = "sample"
     return HttpResponse(response_text, content_type="text/plain")
