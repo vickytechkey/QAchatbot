@@ -17,3 +17,13 @@ To install git large file system use the following command
 
  command to install git-lfs in conda
  conda install conda-forge::git-lfs
+
+ building python
+
+sudo yum groupinstall "Development Tools"
+sudo yum install sqlite-devel
+ sudo dnf install libffi-devel
+
+ After python building  
+ 
+ pip install -U "huggingface_hub[cli]"
