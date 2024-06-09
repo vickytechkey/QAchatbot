@@ -13,7 +13,8 @@ from django.conf import settings
 import sentence_transformers
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
-from .readdoc import model , tokenizer
+from .readdoc import create_folder
+from .loadmodel import checkformodelcache
 
 # Create your views here.
 
@@ -21,8 +22,13 @@ async def home(request):
     query = request.GET.get('q')
     if query is None:
         query = "who is vignesh?"
-    data = similar_text('data.txt', query)
-    inputs = tokenizer(data, return_tensors="pt")
-    outputs = model.generate(**inputs)
-    response_text = tokenizer.batch_decode(outputs, skip_special_tokens=True)
+    dir_location = create_folder('local_flan_t5_xxl')
+    model = checkformodelcache(
+        'model_local_flan_t5_xxl',
+        'google/flan-t5-xxl',
+        dir_location
+    )
+    
+    # data = similar_text('data.txt', query)
+    response_text = "Testing"
     return HttpResponse(response_text, content_type="text/plain")

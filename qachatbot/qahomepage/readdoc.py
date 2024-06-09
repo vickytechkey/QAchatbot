@@ -13,14 +13,14 @@ from django.conf import settings
 import sentence_transformers
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
-model_name = "google/flan-t5-xxl"
-local_path = "local_flan_t5_xxl"
+# model_name = "google/flan-t5-xxl"
+# local_path = "local_flan_t5_xxl"
 
-module_dir = os.path.dirname(__file__)
-folder_path = os.path.join(module_dir, local_path)
+# module_dir = os.path.dirname(__file__)
+# folder_path = os.path.join(module_dir, local_path)
 
-tokenizer = AutoTokenizer.from_pretrained(folder_path)
-model = AutoModelForSeq2SeqLM.from_pretrained(folder_path)
+# tokenizer = AutoTokenizer.from_pretrained(folder_path)
+# model = AutoModelForSeq2SeqLM.from_pretrained(folder_path)
 
 
 def similar_text(file_path , query):
@@ -35,18 +35,12 @@ def similar_text(file_path , query):
     docs_similarity = db.similarity_search(query)
     return docs_similarity[0].page_content
 
-async def getmodel_path(folder_name , model_name):
+def create_folder(folder_name):
     module_dir = os.path.dirname(__file__)
     folder_path = os.path.join(module_dir, folder_name)
-    if os.path.exists(folder_path):
-        return folder_path
-    else:
-        os.makedirs(folder_path)
-        tokenizer = AutoTokenizer.from_pretrained(model_name)
-        model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
-        tokenizer.save_pretrained(folder_path)
-        model.save_pretrained(folder_path)
-        return folder_path
+    return folder_path
+    
+    
         
     
     
