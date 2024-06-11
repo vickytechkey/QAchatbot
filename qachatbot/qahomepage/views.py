@@ -8,19 +8,19 @@ from langchain.embeddings import HuggingFaceBgeEmbeddings
 from langchain.vectorstores import FAISS
 from langchain.chains.question_answering import load_qa_chain
 from langchain import HuggingFaceHub
+from langchain.llms import HuggingFacePipeline
 import os
 from django.conf import settings
 import sentence_transformers
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM , pipeline
 
-from .readdoc import create_folder
+from .readdoc import similar_text
 from .loadmodel import load_model
 
-dir_location = create_folder('local_flan_t5_xxl')
-model = load_model(
-        'google/flan-t5-xxl',
-        dir_location
-    )
+# dir_location = create_folder('local_flan_t5_xxl')
+file_path = 'flan-t5-small'
+model = AutoModelForSeq2SeqLM.from_pretrained("google/flan-t5-small" , cache_dir=file_path)
+tokenizer = AutoTokenizer.from_pretrained("google/flan-t5-small" , cache_dir=file_path)
 
 # Create your views here.
 
@@ -28,8 +28,9 @@ def home(request):
     query = request.GET.get('q')
     if query is None:
         query = "who is vignesh?"
-    
-    
-    # data = similar_text('data.txt', query)
-    response_text = "sample"
+    data = similar_text('data.txt', query)
+    qa_pipeline = pipeline("text2text-generation", model=model, tokenizer=tokenizer)
+    llm = HuggingFacePipeline(pipeline=qa_pipeline)
+    chain = load_qa_chain(llm ,  chain_type="stuff")
+    response_text = chain.run(input_documents =data , question = query )
     return HttpResponse(response_text, content_type="text/plain")
